@@ -33,14 +33,22 @@ theta = tf.Variable(tf.random_uniform([n+1,1], -1.0, 1.0), name = "theta")
 y_pred = tf.matmul(X, theta, name = "predictions")
 error = y_pred - y
 mse = tf.reduce_mean(tf.square(error), name = "mse")
+
 ### TWO METHODS OF CALCULATING GRADIENT
 # this method 'manually' calculates the gradient
-# gradients = 2/m * tf.matmul(tf.transpose(X), error) 
+# gradients = 2/m * tf.matmul(tf.transpose(X), error)
 # this method uses TensorFlow's reverse-mode audodiff to calc the gradients
-gradients = tf.gradients(mse, [theta])[0]
+# gradients = tf.gradients(mse, [theta])[0]
+
 # assign() creates a node that assigns a new value to a variable
 # Here it implements the batch gradient decent step theta(next) = theta(current) - [learningRate * gradients]
-training_op = tf.assign(theta, theta - learning_rate * gradients)
+# training_op = tf.assign(theta, theta - learning_rate * gradients)
+
+### OUT OF THE BOX OPTIMIZER
+# REPLACE gradients = ... and training_op =... with the following;
+optimizer = tf.train.GradientDescentOptimizer(learning_rate = learning_rate)
+training_op = optimizer.minimize(mse)
+
 
 ##### EXECUTION PHASE
 init = tf.global_variables_initializer()
